@@ -1,29 +1,52 @@
-const { response,request } = require('express');
+const { response, request, query } = require('express');
 const bcryptjs = require('bcryptjs');
 
 
-const Usuario=require('../models/usuario');
-
-
+const Usuario = require('../models/usuario');
 res = response;
-const usuariosGet = (req=request, res=response) => {
-   const query= req.query;
+const usuariosGet = async (req = request, res = response) => {
+
+    // const query= req.query;
+    const { limite = 5, desde = 0 } = req.query;
+    const query = { estado: true }
+    /*const usuarios = await Usuario.find(query)
+        .skip(Number(desde))
+        .limit(Number(limite));
+
+    const total = await Usuario.countDocuments(query);*/
+
+    const [total,usuarios] =await Promise.all([
+        Usuario.countDocuments(query),
+        Usuario.find(query)
+            .skip(Number(desde))
+            .limit(Number(limite))
+    ]);
+
     res.json({
-        msg: 'get API-Controlador',
-        query
+
+        
+        total,
+        usuarios
+
+        //msg: 'get API-Controlador',
+        //query
     });
 }
 
-const usuarioPost = async(req, res = response) => {
-    
+const usuarioPost = async (req, res = response) => {
+
     const { nombre, correo, password, rol } = req.body;
     const usuario = new Usuario({ nombre, correo, password, rol });
 
     // Encriptar la contraseña
     const salt = bcryptjs.genSaltSync();
-    usuario.password = bcryptjs.hashSync( password, salt );
+    usuario.password = bcryptjs.hashSync(password, salt);
 
     // Guardar en BD
+    console.log('---------------');
+    console.log(correo);
+    console.log('---------------');
+
     await usuario.save();
 
     res.json({
@@ -37,21 +60,20 @@ const usuarioDelete = (req, res) => {
     })
 }
 
-const usuarioPut = async(req, res) => {
-    const {id}=req.params;
-    const {_id,password,google,correo,...resto}=req.body;
-   
+const usuarioPut = async (req, res) => {
+    const { id } = req.params;
+    const { _id, password, google, correo, ...resto } = req.body;
+
     //TODO: validar contra base de datos
     if (password) {
-        const salt=bcrypt.genSaltSync();
-        resto.password=bcrypt.hashSync(password,salt);
-    
+        const salt = bcryptjs.genSaltSync();
+        resto.password = bcryptjs.hashSync(password, salt);
+
     }
-   
-    const usuario =await Usuario.findByIdAndUpdate(id,resto);
+
+    const usuario = await Usuario.findByIdAndUpdate(id, resto);
 
     res.json({
-        msg: 'put API-controlador',
         usuario
     })
 }
@@ -61,7 +83,7 @@ const usuarioPatch = (req, res) => {
     })
 }
 
-module.exports = { 
+module.exports = {
     usuariosGet,
     usuarioPost,
     usuarioDelete,
