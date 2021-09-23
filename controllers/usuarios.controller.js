@@ -23,11 +23,8 @@ const usuariosGet = async (req = request, res = response) => {
     ]);
 
     res.json({
-
-        
         total,
         usuarios
-
         //msg: 'get API-Controlador',
         //query
     });
@@ -43,10 +40,6 @@ const usuarioPost = async (req, res = response) => {
     usuario.password = bcryptjs.hashSync(password, salt);
 
     // Guardar en BD
-    console.log('---------------');
-    console.log(correo);
-    console.log('---------------');
-
     await usuario.save();
 
     res.json({
@@ -54,10 +47,17 @@ const usuarioPost = async (req, res = response) => {
     });
 }
 
-const usuarioDelete = (req, res) => {
-    res.json({
-        msg: 'delete API-controlador'
-    })
+const usuarioDelete = async(req, res) => {
+   
+    const {id}=req.params;
+
+    //Fisicamente lo borramos
+   // const usuario=await Usuario.findByIdAndDelete(id);
+    const usuario=await Usuario.findByIdAndUpdate(id,{estado:false});
+
+
+
+    res.json(usuario)
 }
 
 const usuarioPut = async (req, res) => {
