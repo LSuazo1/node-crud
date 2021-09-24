@@ -8,6 +8,10 @@ class Server {
         this.app = express();
         this.port = process.env.PORT;
         this.usuariosPath-"/api/usuarios";
+        //ruta para jwt
+        this.authPath = "/api/auth";
+
+
         //Conectar a base de datos
         this.conectarDB();
         //Middlewares
@@ -33,7 +37,9 @@ class Server {
 
 
     routes() {
-      this.app.use('/api/usuarios',require('../routes/usuarios'));
+        this.app.use('/api/auth',require('../routes/auth'));
+        this.app.use('/api/usuarios',require('../routes/usuarios'));
+        
     }
     listen() {
         this.app.listen(this.port, () => {
