@@ -9,7 +9,7 @@ class Server {
         this.port = process.env.PORT;
         this.usuariosPath="/api/usuarios";
         //ruta para jwt
-        this.authPath = "/api/auth";
+        this.authPath="/api/auth";
 
 
         //Conectar a base de datos
