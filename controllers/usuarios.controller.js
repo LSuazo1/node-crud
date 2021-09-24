@@ -54,10 +54,12 @@ const usuarioDelete = async(req, res) => {
     //Fisicamente lo borramos
    // const usuario=await Usuario.findByIdAndDelete(id);
     const usuario=await Usuario.findByIdAndUpdate(id,{estado:false});
+   // const usuarioAutenticado=req.usuario; //prueba que podemos recibir desde el middleware el dato
 
 
-
-    res.json(usuario)
+    res.json({usuario
+     //   ,usuarioAutenticado
+    })
 }
 
 const usuarioPut = async (req, res) => {
@@ -72,9 +74,12 @@ const usuarioPut = async (req, res) => {
     }
 
     const usuario = await Usuario.findByIdAndUpdate(id, resto);
+   
+
 
     res.json({
         usuario
+        
     })
 }
 const usuarioPatch = (req, res) => {
